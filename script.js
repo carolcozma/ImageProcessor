@@ -1,6 +1,69 @@
 const API_KEY = "yuFkBgWNNkWVGNXGzbc88W4XsWrXiuGLhFVk9cI9";
 
 document.addEventListener("DOMContentLoaded", function () {
+
+  function adjustBrightness(img, brightness) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    brightness = brightness * 2.55;
+
+    const sliceSize = data.length / 4;
+    for (let slice = 0; slice < 4; slice++) {
+      setTimeout(() => {
+        for (let i = slice * sliceSize; i < (slice + 1) * sliceSize; i += 4) {
+          if ((i / 4) % canvas.width < canvas.width / 2) {
+            data[i] += brightness;
+            data[i + 1] += brightness;
+            data[i + 2] += brightness;
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      }, slice * 1000);
+    }
+  }
+
+  function adjustContrast(img, contrast) {
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    contrast = (contrast / 100) + 1;  // convert to decimal & shift range: [0,2]
+    const intercept = 128 * (1 - contrast);
+
+    const sliceSize = data.length / 4;
+    for (let slice = 0; slice < 4; slice++) {
+      setTimeout(() => {
+        for (let i = slice * sliceSize; i < (slice + 1) * sliceSize; i += 4) {
+          if ((i / 4) % canvas.width < canvas.width / 2) {
+            data[i] = data[i] * contrast + intercept;     // red
+            data[i + 1] = data[i + 1] * contrast + intercept; // green
+            data[i + 2] = data[i + 2] * contrast + intercept; // blue
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+        img.src = canvas.toDataURL();
+      }, slice * 1000);
+    }
+  }
+  
+
   function convertToGrayscale(img) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -19,9 +82,9 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = slice * sliceSize; i < (slice + 1) * sliceSize; i += 4) {
           if ((i / 4) % canvas.width < canvas.width / 2) {
             const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            data[i] = avg; // red
-            data[i + 1] = avg; // green
-            data[i + 2] = avg; // blue
+            data[i] = avg; 
+            data[i + 1] = avg; 
+            data[i + 2] = avg; 
           }
         }
         ctx.putImageData(imageData, 0, 0);
@@ -106,7 +169,15 @@ document.addEventListener("DOMContentLoaded", function () {
       img.src = data.message;
       convertToGrayscale(img);
     }
-    });
+    if (selectElement.value === "Contrast") {
+      img.src = data.message;
+      adjustContrast(img, 50);
+    }
+    if (selectElement.value === "Brightness") {
+      img.src = data.message;
+      adjustBrightness(img, 50);
+    }
+  });
     const changeButton = document.querySelector(".change-image-button");
     changeButton.addEventListener("click", function () {
       fetchDogImage().then((responseData) => {
