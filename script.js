@@ -1,6 +1,8 @@
+const API_KEY = "yuFkBgWNNkWVGNXGzbc88W4XsWrXiuGLhFVk9cI9";
 
 document.addEventListener("DOMContentLoaded", function () {
-  //adjust the brightness of the image
+
+  //adjust brightness
   function adjustBrightness(img, brightness) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -31,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  //adjust the contrast of the image
+  //adjust contrast
   function adjustContrast(img, contrast) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -44,7 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
-    contrast = contrast / 100 + 1;
+    contrast = (contrast / 100) + 1;  
     const intercept = 128 * (1 - contrast);
 
     const sliceSize = data.length / 4;
@@ -52,9 +54,9 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(() => {
         for (let i = slice * sliceSize; i < (slice + 1) * sliceSize; i += 4) {
           if ((i / 4) % canvas.width < canvas.width / 2) {
-            data[i] = data[i] * contrast + intercept;
-            data[i + 1] = data[i + 1] * contrast + intercept;
-            data[i + 2] = data[i + 2] * contrast + intercept;
+            data[i] = data[i] * contrast + intercept;     
+            data[i + 1] = data[i + 1] * contrast + intercept; 
+            data[i + 2] = data[i + 2] * contrast + intercept; 
           }
         }
         ctx.putImageData(imageData, 0, 0);
@@ -62,8 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
       }, slice * 1000);
     }
   }
-
-  //convert the image to grayscale
+  
+  //convert to grayscale
   function convertToGrayscale(img) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -82,9 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
         for (let i = slice * sliceSize; i < (slice + 1) * sliceSize; i += 4) {
           if ((i / 4) % canvas.width < canvas.width / 2) {
             const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            data[i] = avg;
-            data[i + 1] = avg;
-            data[i + 2] = avg;
+            data[i] = avg; 
+            data[i + 1] = avg; 
+            data[i + 2] = avg; 
           }
         }
         ctx.putImageData(imageData, 0, 0);
@@ -93,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  //normalize the colors of the image
+  //normalize colors
   function normalizeColors(img) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -125,13 +127,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  //fetch a random dog image
+  //fetch dog image
   async function fetchDogImage() {
     const response = await fetch("https://dog.ceo/api/breeds/image/random");
     const data = await response.json();
 
     const imageContainer = document.querySelector(".image-container");
-    const childElement = document.querySelector("img");
+    const childElement = document.querySelector('img');
     if (childElement) {
       imageContainer.removeChild(childElement);
     }
@@ -150,14 +152,13 @@ document.addEventListener("DOMContentLoaded", function () {
     data = responseData;
   });
 
-  //reset the image
-  const resetButton = document.querySelector(".reset-button");  
+
+  const resetButton = document.querySelector(".reset-button");
   resetButton.addEventListener("click", function () {
     const img = document.querySelector("img");
     img.src = data.message;
   });
 
-  //apply the selected filter
   const applyButton = document.querySelector(".apply-button");
   applyButton.addEventListener("click", function () {
     const img = document.querySelector("img");
@@ -181,11 +182,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  //change the image
   const changeButton = document.querySelector(".change-image-button");
   changeButton.addEventListener("click", function () {
     fetchDogImage().then((responseData) => {
       data = responseData;
     });
+  
   });
 });
