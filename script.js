@@ -1,5 +1,3 @@
-const API_KEY = "yuFkBgWNNkWVGNXGzbc88W4XsWrXiuGLhFVk9cI9";
-
 document.addEventListener("DOMContentLoaded", function () {
 
   //adjust brightness
